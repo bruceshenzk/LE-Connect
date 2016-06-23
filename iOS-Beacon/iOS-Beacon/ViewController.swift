@@ -15,6 +15,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
     var peripheralManager: CBPeripheralManager!
     var accelerationManager: AccelerationManager!
     var motionCharacteristic: CBMutableCharacteristic!
+    var uuidCharacteristic: CBMutableCharacteristic!
 
 
     override func viewDidLoad() {
@@ -42,22 +43,27 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         if (peripheral.state != CBPeripheralManagerState.PoweredOn) {
             return
         }
-        Logger.log("self.peripheralManager powered on.", level: 1)
+        Logger.info("self.peripheralManager powered on." )
         
         let data = "testing".dataUsingEncoding(NSUTF8StringEncoding)
 
 
         motionCharacteristic = CBMutableCharacteristic(type: CBUUID(string: UUIDs.MOTION_CHARACTERISTIC_UUID), properties: CBCharacteristicProperties.Read, value: nil, permissions: CBAttributePermissions.Readable)
 
+        let UUIDString = UIDevice.currentDevice().identifierForVendor!.UUIDString
+        Logger.info("UUIDString: \(UUIDString)" )
+        Logger.info("UUIDStringData: \(UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false))" )
+        uuidCharacteristic = CBMutableCharacteristic(type: CBUUID(string: UUIDs.UUID_CHARACTERISTIC_UUID), properties: CBCharacteristicProperties.Read, value: UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false), permissions: CBAttributePermissions.Readable)
+        
         let transferService = CBMutableService(type: CBUUID(string: UUIDs.TRANSFER_SERVICE_UUID), primary: true)
-        transferService.characteristics = [motionCharacteristic]
+        transferService.characteristics = [motionCharacteristic, uuidCharacteristic]
         peripheralManager.addService(transferService)
         
         peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey:[CBUUID(string: UUIDs.TRANSFER_SERVICE_UUID)]])
         
         motionCharacteristic.value = data!
         
-        Logger.log("Characteristic Value:\(motionCharacteristic.value!)", level: 1)
+        Logger.info("Characteristic Value:\(motionCharacteristic.value!)" )
         
         
     
@@ -67,21 +73,25 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         if request.characteristic == motionCharacteristic {
             if accelerationManager.data != nil {
                 motionCharacteristic.value = accelerationManager.data!
-                Logger.log("data: \(accelerationManager.data!)", level: 1)
+                Logger.info("data: \(accelerationManager.data!)" )
             }
             else {
-                Logger.log("Error with acceleration manager data", level: 1)
-                Logger.log("Value:\(motionCharacteristic.value!)", level: 1)
+                Logger.info("Error with acceleration manager data" )
+                Logger.info("Value:\(motionCharacteristic.value!)" )
                 let s = peripheralManager.updateValue(motionCharacteristic.value!, forCharacteristic: motionCharacteristic, onSubscribedCentrals: nil)
                 if(s) {
-                    Logger.log("Success", level: 1)
+                    Logger.info("Success" )
                 }
                 else {
-                    Logger.log("Not Success", level: 1)
+                    Logger.info("Not Success" )
                 }
 //
             }
             request.value = motionCharacteristic.value
+            peripheral.respondToRequest(request, withResult: CBATTError.Success)
+        }
+        else if request.characteristic == uuidCharacteristic {
+            request.value = UIDevice.currentDevice().identifierForVendor?.UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             peripheral.respondToRequest(request, withResult: CBATTError.Success)
         }
     }

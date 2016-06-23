@@ -10,13 +10,33 @@ import Foundation
 
 class Logger {
     
-    static var debugLevel = 0;// 0 is highest debug level: print everything
+    static var info = true;
+    static var warning = true;
+    static var debug = false;
+    static var error = true;
     
-    static func log(items: Any..., level: Int) {
-        if debugLevel <= level {
-            for item in items {
-                print(item)
-            }
+    
+    static func info(items: Any...) {
+        if info {
+            print("[INFO]: \(items)")
+        }
+    }
+    
+    static func warning(items: Any...) {
+        if warning {
+            print("[WARNING]: \(items)")
+        }
+    }
+    
+    static func debug(items: Any...) {
+        if debug {
+            print("[DEBUG]: \(items)")
+        }
+    }
+    
+    static func error(items: Any...) {
+        if error {
+            print("[ERROR]: \(items)")
         }
     }
     
