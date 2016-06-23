@@ -38,7 +38,6 @@ class AccelerationManager {
                                     let y = userAcceleration!.y
                                     let z = userAcceleration!.z
 
-                                    //Logger.info(String(format: "User Acceleration: %.5f", x*x+y*y+z*z), level: 2)
                                     self.accelerationsOverTime[self.accelerationIndex] = x*x+y*y+z*z
                                 }
                                 else {
@@ -49,15 +48,16 @@ class AccelerationManager {
                                 self.accelerationIndex = (self.accelerationIndex+1)%5
 
                                 var average = self.calculateAverage()
-                                //Logger.info(String(format: "Average User Acceleration: %.5f",average), level: 2)
 
                                 self.data = NSMutableData(bytes: &average, length: sizeof(Double))
-                                //Logger.info("Data:\(self.data)" )
                                 
                             })
                         }
                         usleep(200)
                     }
+                }
+                else {
+                    Logger.warning("Device Motion Not Available")
                 }
             })
             operationQueue.addOperation(operation)

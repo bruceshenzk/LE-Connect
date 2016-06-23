@@ -43,7 +43,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         if (peripheral.state != CBPeripheralManagerState.PoweredOn) {
             return
         }
-        Logger.info("self.peripheralManager powered on." )
+        Logger.info("PeripheralManager powered on." )
         
         let data = "testing".dataUsingEncoding(NSUTF8StringEncoding)
 
@@ -85,7 +85,6 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
                 else {
                     Logger.info("Not Success" )
                 }
-//
             }
             request.value = motionCharacteristic.value
             peripheral.respondToRequest(request, withResult: CBATTError.Success)

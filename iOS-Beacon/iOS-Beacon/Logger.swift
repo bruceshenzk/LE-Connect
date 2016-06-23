@@ -10,33 +10,41 @@ import Foundation
 
 class Logger {
     
-    static var info = true;
-    static var warning = true;
-    static var debug = false;
-    static var error = true;
+    private static var info = true;
+    private static var warning = true;
+    private static var debug = true;
+    private static var error = true;
     
     
     static func info(items: Any...) {
         if info {
-            print("[INFO]: \(items)")
+            for item in items {
+                print("[INFO]: \(item)")
+            }
         }
     }
     
     static func warning(items: Any...) {
         if warning {
-            print("[WARNING]: \(items)")
+            for item in items {
+                print("[WARNING]: \(item)")
+            }
         }
     }
     
     static func debug(items: Any...) {
         if debug {
-            print("[DEBUG]: \(items)")
+            for item in items {
+                print("[DEBUG]: \(item)")
+            }
         }
     }
     
     static func error(items: Any...) {
         if error {
-            print("[ERROR]: \(items)")
+            for item in items {
+                print("[ERROR]: \(item)")
+            }
         }
     }
     
