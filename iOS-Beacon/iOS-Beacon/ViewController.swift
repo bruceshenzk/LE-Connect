@@ -21,6 +21,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        // Disable application auto lock screen
+        UIApplication.sharedApplication().idleTimerDisabled = true
         peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
         accelerationManager = AccelerationManager()
         accelerationManager.startUpdateVariable()
