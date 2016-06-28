@@ -1,9 +1,10 @@
 from __future__ import print_function
-
 import sys
 import threading
 import time
+import signal
 import socket_connect
+import signal_handler
 from struct import *
 from bluetooth.ble import GATTRequester
 from bluetooth.ble import DiscoveryService
@@ -15,27 +16,26 @@ class Reader(object):
         self.socket_enable = socket_open
         self.connect()
         t = threading.Thread(name=address,target=self.periodical_request)
+        t.daemon = True
         t.start()
 
     def connect(self):
-        print ("Connecting...", end=' ')
-        sys.stdout.flush()
+        print ("Connecting...")
         
-        self.requester.connect(True,"random","medium",0,0)
+        self.requester.connect(True,"random","medium",0,64)
         print ("OK!")
 
     def request_uuid(self):
-        try:
-            self.uuid = self.requester.read_by_uuid("D6F8BDCC-3885-11E6-AC61-9E71128CAE77")[0]
-            print("uuid:", self.uuid)
-        except RuntimeError:
-            print("request uuid error")
-            self.uuid = ""    
+        self.uuid = self.requester.read_by_uuid("D6F8BDCC-3885-11E6-AC61-9E71128CAE77")[0]
+        print("uuid read:", self.uuid)
+        if len(self.uuid) < 36:
+            self.uuid = self.uuid + self.requester.read_by_uuid("D6F8BDCC-3885-11E6-AC61-9E71128CAE77")[0]
+        print("uuid:", self.uuid)   
 
     def periodical_request(self):
         try:
             self.request_uuid()
-        except Error:
+        except RuntimeError:
             return
         count = 0
         while True:
@@ -50,13 +50,14 @@ class Reader(object):
         if not self.requester.is_connected():
             print("Reconnecting")
             self.requester.disconnect()
-            self.requester.connect(True,"random","medium",0,0)
+            self.requester.connect(True,"random","medium",0,64)
             print("Reconnected")
         try:
             data = self.requester.read_by_uuid(
                 "16864516-21E0-11E6-B67B-9E71128CAE77")[0]
-        except RuntimeError:
-            print("RuntimeError")
+        except RuntimeError as e:
+            print("RuntimeError", e)
+            self.requester.disconnect()
             return
         try:
             d = decode_string_to_double(data)
@@ -84,10 +85,4 @@ for address, name in devices.items():
         Reader(address, socket_open)
     except RuntimeError:
         print ("RuntimeError")
-print ("Done.")    
-
-
-
-
-
-
+signal.pause()
