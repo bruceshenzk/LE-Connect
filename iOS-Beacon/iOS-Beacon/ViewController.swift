@@ -17,6 +17,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
     var motionCharacteristic: CBMutableCharacteristic!
     var uuidCharacteristic: CBMutableCharacteristic!
     var requestingUUIDCentralList: [NSUUID]!
+    var requestingUUIDDic: [NSUUID: Double]!
 
 
     override func viewDidLoad() {
@@ -28,6 +29,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         accelerationManager = AccelerationManager()
         accelerationManager.startUpdateVariable()
         requestingUUIDCentralList = [NSUUID]()
+        requestingUUIDDic = [NSUUID: Double]()
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -77,35 +79,32 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
             if accelerationManager.data != nil {
                 motionCharacteristic.value = accelerationManager.data!
                 Logger.info("data: \(accelerationManager.data!)" )
+                request.value = motionCharacteristic.value
+                peripheral.respondToRequest(request, withResult: CBATTError.Success)
             }
             else {
                 Logger.error("Error with acceleration manager data" )
-                Logger.info("Value:\(motionCharacteristic.value!)" )
-                let s = peripheralManager.updateValue(motionCharacteristic.value!, forCharacteristic: motionCharacteristic, onSubscribedCentrals: nil)
-                if(s) {
-                    Logger.info("Success" )
-                }
-                else {
-                    Logger.info("Not Success" )
-                }
+                peripheral.respondToRequest(request, withResult: CBATTError.InsufficientResources)
             }
-            request.value = motionCharacteristic.value
-            peripheral.respondToRequest(request, withResult: CBATTError.Success)
         }
         else if request.characteristic == uuidCharacteristic {
-            if requestingUUIDCentralList.contains(request.central.identifier) {
-                requestingUUIDCentralList.removeAtIndex(requestingUUIDCentralList.indexOf(request.central.identifier)!)
-                request.value = uuidCharacteristic.value!.subdataWithRange(NSMakeRange(19, uuidCharacteristic.value!.length - 19))
-                Logger.debug("\(request.value!)")
-                peripheral.respondToRequest(request, withResult: CBATTError.Success)
+            let deviceUUID = request.central.identifier
+            if requestingUUIDDic[deviceUUID] != nil {
+                if (NSDate().timeIntervalSince1970 - requestingUUIDDic[deviceUUID]!) < 10 {
+                    // if the central device just request for uuid within 10 seconds
+                    requestingUUIDDic[deviceUUID] = nil
+                    request.value = uuidCharacteristic.value!.subdataWithRange(NSMakeRange(19, uuidCharacteristic.value!.length - 19))
+                    Logger.debug("\(request.value!)")
+                    peripheral.respondToRequest(request, withResult: CBATTError.Success)
+                    return
+                }
+                // requested long ago and expire
             }
-            else {
-                requestingUUIDCentralList.append(request.central.identifier)
-                request.value = uuidCharacteristic.value!.subdataWithRange(NSMakeRange(0, 19))
-                peripheral.respondToRequest(request, withResult: CBATTError.Success)
-                Logger.debug("\(request.value!)")
-            }
-            Logger.debug("\(requestingUUIDCentralList)")
+            // never request
+            requestingUUIDDic[deviceUUID] = NSDate().timeIntervalSince1970
+            request.value = uuidCharacteristic.value!.subdataWithRange(NSMakeRange(0, 19))
+            peripheral.respondToRequest(request, withResult: CBATTError.Success)
+            Logger.debug("\(request.value!)")
         }
     }
 
