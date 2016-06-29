@@ -207,7 +207,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "iOS-Beacon" */;
+			buildConfigurationList = 8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "in" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -502,7 +502,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "iOS-Beacon" */ = {
+		8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "in" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8E9959636BD159EE31768171 /* Debug */,
