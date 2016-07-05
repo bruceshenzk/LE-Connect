@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Android-Beacon</string>
+
+    <!-- Adv -->
+    <string name="label_advertisingStatus">Advertising Status</string>
+    <string name="status_advertising">Advertising (Keep Screen On)</string>
+    <string name="status_notAdvertising">Not Advertising</string>
+    <string name="status_advDataTooLarge">Not Advertising. Advertisement is larger than 31 bytes.</string>
+    <string name="status_advFeatureUnsupported">Not Advertising. Advertising not supported.</string>
+    <string name="status_advInternalError">Not Advertising. Internal error occurred.</string>
+    <string name="status_advTooManyAdvertisers">Not Advertising. No advertising instance is available.</string>
+    <string name="status_noLeAdv">LE Advertising is not available. Please pair with a device to be
+    discoverable.</string>
+
+    <!-- Bluetooth -->
+    <string name="bluetoothNotSupported">BLE Peripheral Simulator closing: Bluetooth Not Supported</string>
+</resources>
