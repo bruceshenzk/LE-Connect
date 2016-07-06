@@ -30,8 +30,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final String TAG = MainActivity.class.getCanonicalName();
+
+    private AccelerationManager mAccelerationManager;
+    private String uuid = UUID.randomUUID().toString();
+    private Map<String, Long> connectionTime = new HashMap<>();
 
     private TextView mAdvStatus;
     private BluetoothGattService mBluetoothGattService;
@@ -100,13 +108,35 @@ public class MainActivity extends AppCompatActivity {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
             Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
             Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
-            if (offset != 0) {
-                mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
-            /* value (optional) */ null);
-                return;
+            if(characteristic.getUuid().equals(UUID_CHARACTERISTIC_UUID)) {
+                if(connectionTime.containsKey(device.getAddress()) &&
+                        System.currentTimeMillis() - connectionTime.get(device.getAddress()) < 10000L) {
+                    mGattServer.sendResponse(device,requestId, BluetoothGatt.GATT_SUCCESS,
+                            offset, uuid.substring(19).getBytes());
+                    connectionTime.put(device.getAddress(), null);
+                    return;
+                }
+                mGattServer.sendResponse(device,requestId, BluetoothGatt.GATT_SUCCESS,
+                        offset, uuid.substring(0,19).getBytes());
+                connectionTime.put(device.getAddress(), System.currentTimeMillis());
+
             }
-            mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-                    offset, characteristic.getValue());
+            else if(characteristic.getUuid().equals(MOTION_CHARACTERISTIC_UUID)) {
+                if(mAccelerationManager.hasValue) {
+                    byte[] bytes = new byte[8];
+                    double acc = mAccelerationManager.averagedAcceleration;
+                    ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).putDouble(acc);
+                    characteristic.setValue(bytes);
+                    mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
+                            offset, characteristic.getValue());
+                    Log.d(TAG, "Passing double: " + acc);
+                }
+                else {
+                    mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, null);
+                }
+            }
+
+
         }
 
         @Override
@@ -177,9 +207,6 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothGattCharacteristic.PROPERTY_READ,
                 BluetoothGattCharacteristic.PERMISSION_READ);
 
-        String uuid = UUID.randomUUID().toString();
-        mUUIDCharacteristic.setValue(uuid);
-
         mBluetoothGattService.addCharacteristic(mMotionCharacteristic);
         mBluetoothGattService.addCharacteristic(mUUIDCharacteristic);
 
@@ -195,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 .addServiceUuid(new ParcelUuid(TRANSFER_SERVICE_UUID))
                 .build();
 
+        mAccelerationManager = new AccelerationManager(this);
     }
 
 
@@ -217,6 +245,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mAccelerationManager.unregisterListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAccelerationManager.registerListener();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (mGattServer != null) {
@@ -227,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
             // pointer exception is raised.
             mAdvertiser.stopAdvertising(mAdvCallback);
         }
+        mAccelerationManager.unregisterListener();
         resetStatusViews();
     }
 }
