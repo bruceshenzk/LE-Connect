@@ -14,7 +14,8 @@
             android:name="android.hardware.bluetooth_le"
             android:required="true" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

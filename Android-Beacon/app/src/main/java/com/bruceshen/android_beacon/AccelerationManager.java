@@ -23,10 +23,14 @@ public class AccelerationManager implements SensorEventListener{
     public boolean hasValue = false;
 
     public AccelerationManager(Context aContext) {
-        motionCalculation = new LowFilterMotionCalculation();
+        motionCalculation = new LinearMotionCalculation();
         context = aContext;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(motionCalculation.getSensor());
+        if(mSensor == null) {
+            motionCalculation = new LowFilterMotionCalculation();
+            mSensor = mSensorManager.getDefaultSensor(motionCalculation.getSensor());
+        }
         registerListener();
     }
 
@@ -37,6 +41,9 @@ public class AccelerationManager implements SensorEventListener{
 
     public void registerListener() {
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (! hasValue) {
+            hasValue = true;
+        }
     }
 
     @Override
