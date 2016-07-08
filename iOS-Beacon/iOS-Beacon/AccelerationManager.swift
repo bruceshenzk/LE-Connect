@@ -15,13 +15,13 @@ class AccelerationManager {
     var operationQueue: NSOperationQueue!
     var operation: NSOperation!
     var data:NSMutableData!
-    var accelerationsOverTime = [Double](count: 5, repeatedValue: 0.0)
-    var accelerationIndex = 0
+    var motionCalc: MotionCalculation!
 
     init() {
         motionManager = CMMotionManager()
         motionManager.startDeviceMotionUpdates()
         operationQueue = NSOperationQueue()
+        motionCalc = LowFilterMotionCalculation()
     }
 
     func startUpdateVariable() {
@@ -32,28 +32,14 @@ class AccelerationManager {
                         if self.motionManager.deviceMotion?.userAcceleration != nil {
                             dispatch_async(dispatch_get_main_queue(), {
                                 // Update variables if there is change in motion
-                                if self.motionManager.deviceMotionActive {
-                                    let userAcceleration = self.motionManager.deviceMotion?.userAcceleration
-                                    let x = userAcceleration!.x
-                                    let y = userAcceleration!.y
-                                    let z = userAcceleration!.z
-
-                                    self.accelerationsOverTime[self.accelerationIndex] = x*x+y*y+z*z
-                                }
-                                else {
-                                    self.accelerationsOverTime[self.accelerationIndex] =
-                                        self.accelerationsOverTime[(self.accelerationIndex-1)%5]
-                                }
                                 
-                                self.accelerationIndex = (self.accelerationIndex+1)%5
-
-                                var average = self.calculateAverage()
-
-                                self.data = NSMutableData(bytes: &average, length: sizeof(Double))
+                                var result = self.motionCalc.calcMotion(self.motionManager)
+                                
+                                self.data = NSMutableData(bytes: &result, length: sizeof(Double))
                                 
                             })
                         }
-                        usleep(200)
+                        usleep(50)
                     }
                 }
                 else {
@@ -63,15 +49,7 @@ class AccelerationManager {
             operationQueue.addOperation(operation)
         }
     }
-
-    func calculateAverage() -> Double {
-        var sum = 0.0
-        for acc in accelerationsOverTime {
-            sum += acc
-        }
-        return sum / Double(accelerationsOverTime.count)
-    }
-
+    
     func stopUpdateVariable() {
         operationQueue.cancelAllOperations()
     }

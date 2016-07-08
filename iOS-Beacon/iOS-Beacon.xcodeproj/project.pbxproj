@@ -18,6 +18,9 @@
 		8E995D29BA1465508D13E1FF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8E9955CF48CB12C8A642A097 /* Info.plist */; };
 		8E995FE610E547B460E0D79B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E995D2941BA0980EA9C8D0F /* Main.storyboard */; };
 		8E995FF75BF525D6A0F146B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E995E0B3B4202CF968AD321 /* Assets.xcassets */; };
+		A33191741D2FFAA8002C8F11 /* MotionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33191731D2FFAA8002C8F11 /* MotionCalculation.swift */; };
+		A33191761D2FFB52002C8F11 /* LinearMotionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33191751D2FFB52002C8F11 /* LinearMotionCalculation.swift */; };
+		A33191781D2FFDE7002C8F11 /* LowFilterMotionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33191771D2FFDE7002C8F11 /* LowFilterMotionCalculation.swift */; };
 		A3F79A521D11CD71005E5236 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F79A511D11CD71005E5236 /* Logger.swift */; };
 		A3F79A541D11CD8F005E5236 /* UUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F79A531D11CD8F005E5236 /* UUIDs.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +57,9 @@
 		8E995E160253C3903E93CBFE /* iOS-BeaconUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS-BeaconUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E995F04247F49F01BAE0B0D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8E995F489576B4A66EFE5819 /* iOS-BeaconTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS-BeaconTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A33191731D2FFAA8002C8F11 /* MotionCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionCalculation.swift; sourceTree = "<group>"; };
+		A33191751D2FFB52002C8F11 /* LinearMotionCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearMotionCalculation.swift; sourceTree = "<group>"; };
+		A33191771D2FFDE7002C8F11 /* LowFilterMotionCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowFilterMotionCalculation.swift; sourceTree = "<group>"; };
 		A3F79A511D11CD71005E5236 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		A3F79A531D11CD8F005E5236 /* UUIDs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUIDs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,6 +111,9 @@
 				A3F79A531D11CD8F005E5236 /* UUIDs.swift */,
 				A3F79A511D11CD71005E5236 /* Logger.swift */,
 				8E99512110F9B87E023B482A /* AccelerationManager.swift */,
+				A33191731D2FFAA8002C8F11 /* MotionCalculation.swift */,
+				A33191751D2FFB52002C8F11 /* LinearMotionCalculation.swift */,
+				A33191771D2FFDE7002C8F11 /* LowFilterMotionCalculation.swift */,
 			);
 			path = "iOS-Beacon";
 			sourceTree = "<group>";
@@ -207,7 +216,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "in" */;
+			buildConfigurationList = 8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "iOS-Beacon" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -261,9 +270,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A33191781D2FFDE7002C8F11 /* LowFilterMotionCalculation.swift in Sources */,
+				A33191761D2FFB52002C8F11 /* LinearMotionCalculation.swift in Sources */,
 				8E9951F7BDF7A6BFAE583AFF /* AppDelegate.swift in Sources */,
 				8E9950AE02F8381FB25CF16D /* ViewController.swift in Sources */,
 				A3F79A541D11CD8F005E5236 /* UUIDs.swift in Sources */,
+				A33191741D2FFAA8002C8F11 /* MotionCalculation.swift in Sources */,
 				8E995338C8A7C3F240FB91FF /* AccelerationManager.swift in Sources */,
 				A3F79A521D11CD71005E5236 /* Logger.swift in Sources */,
 			);
@@ -502,7 +514,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "in" */ = {
+		8E995E34E308ABC8C6B74FBA /* Build configuration list for PBXProject "iOS-Beacon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8E9959636BD159EE31768171 /* Debug */,
