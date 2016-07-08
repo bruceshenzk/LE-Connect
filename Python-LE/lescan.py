@@ -85,12 +85,18 @@ def decode_string_to_double(data):
     return unpack('d', newstr)[0]
 
 def scan_devices():
-    return service.discover(2)
+    try:
+        discovered_devices = service.discover(2)
+        return discovered_devices.items()
+    except RuntimeError:
+        print("RuntimeError when scan for devices")
     
 def request_device_data(devices):
-    if len(devices.items()) > 0:
+    if devices == None:
+        return
+    if len(devices) > 0:
         socket_open = socket_connect.connect()
-    for address, name in devices.items():
+    for address, name in devices:
         # blacklist some devices in the environment
         if address in ['67:F6:0D:F5:C7:AD','6C:94:F8:D5:08:0E','68:64:4B:38:B3:DF']:
             continue
