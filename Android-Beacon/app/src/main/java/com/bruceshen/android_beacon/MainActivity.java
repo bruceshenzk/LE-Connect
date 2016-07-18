@@ -111,8 +111,15 @@ public class MainActivity extends AppCompatActivity {
             if(characteristic.getUuid().equals(UUID_CHARACTERISTIC_UUID)) {
                 if(connectionTime.containsKey(device.getAddress()) &&
                         System.currentTimeMillis() - connectionTime.get(device.getAddress()) < 10000L) {
+                    String tosend;
+                    if(mAccelerationManager.getType() == 0){
+                        tosend = uuid.substring(19)+"1";
+                    }
+                    else {
+                        tosend = uuid.substring(19)+"3";
+                    }
                     mGattServer.sendResponse(device,requestId, BluetoothGatt.GATT_SUCCESS,
-                            offset, uuid.substring(19).getBytes());
+                            offset, tosend.getBytes());
                     connectionTime.put(device.getAddress(), null);
                     return;
                 }

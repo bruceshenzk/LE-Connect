@@ -46,6 +46,16 @@ public class AccelerationManager implements SensorEventListener{
         }
     }
 
+    public int getType() {
+        if(motionCalculation instanceof LinearMotionCalculation) {
+            return 0;
+        }
+        else if (motionCalculation instanceof LowFilterMotionCalculation) {
+            return 1;
+        }
+        return -1;
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 

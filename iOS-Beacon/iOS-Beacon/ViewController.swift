@@ -19,7 +19,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
     var requestingUUIDCentralList: [NSUUID]!
     var requestingUUIDDic: [NSUUID: Double]!
 
-
+    @IBOutlet weak var statusLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -30,11 +30,14 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         accelerationManager.startUpdateVariable()
         requestingUUIDCentralList = [NSUUID]()
         requestingUUIDDic = [NSUUID: Double]()
+        statusLabel.text = "Not Advertising"
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillAppear(animated)
-//        peripheralManager.stopAdvertising()
+        //        peripheralManager.stopAdvertising()
+        statusLabel.text = "Not advertising(Stopped)"
+        
 //        accelerationManager.stopUpdateVariable()
     }
 
@@ -56,7 +59,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
 
         motionCharacteristic = CBMutableCharacteristic(type: CBUUID(string: UUIDs.MOTION_CHARACTERISTIC_UUID), properties: CBCharacteristicProperties.Read, value: nil, permissions: CBAttributePermissions.Readable)
 
-        let UUIDString = UIDevice.currentDevice().identifierForVendor!.UUIDString
+        var UUIDString = UIDevice.currentDevice().identifierForVendor!.UUIDString
+        UUIDString = UUIDString + "0"
         Logger.info("UUIDString: \(UUIDString)" )
         Logger.info("UUIDStringData: \(UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false))" )
         uuidCharacteristic = CBMutableCharacteristic(type: CBUUID(string: UUIDs.UUID_CHARACTERISTIC_UUID), properties: CBCharacteristicProperties.Read, value: nil, permissions: CBAttributePermissions.Readable)
@@ -66,6 +70,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         peripheralManager.addService(transferService)
         
         peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey:[CBUUID(string: UUIDs.TRANSFER_SERVICE_UUID)]])
+        statusLabel.text = "Advertising"
         
         motionCharacteristic.value = data!
         uuidCharacteristic.value = UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
