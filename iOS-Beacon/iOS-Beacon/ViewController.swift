@@ -73,7 +73,12 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         statusLabel.text = "Advertising"
         
         motionCharacteristic.value = data!
-        uuidCharacteristic.value = UUIDString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        if accelerationManager.motionCalc is LinearMotionCalculation {
+            uuidCharacteristic.value = (UUIDString+"0").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        }
+        else if accelerationManager.motionCalc is LowFilterMotionCalculation {
+            uuidCharacteristic.value = (UUIDString+"2").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        }
         
         Logger.info("Characteristic Value:\(motionCharacteristic.value!)" )
     

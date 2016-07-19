@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
             Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
             if(characteristic.getUuid().equals(UUID_CHARACTERISTIC_UUID)) {
-                if(connectionTime.containsKey(device.getAddress()) &&
+                if(connectionTime.containsKey(device.getAddress()) && connectionTime.get(device.getAddress()) != null &&
                         System.currentTimeMillis() - connectionTime.get(device.getAddress()) < 10000L) {
                     String tosend;
                     if(mAccelerationManager.getType() == 0){

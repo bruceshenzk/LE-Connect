@@ -63,7 +63,7 @@ public class AccelerationManager implements SensorEventListener{
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.e(TAG, "onSensorChanged called");
+        //Log.e(TAG, "onSensorChanged called");
         averagedAcceleration = motionCalculation.calcMotion(sensorEvent);
     }
 }

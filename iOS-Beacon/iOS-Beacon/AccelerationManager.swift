@@ -21,7 +21,7 @@ class AccelerationManager {
         motionManager = CMMotionManager()
         motionManager.startDeviceMotionUpdates()
         operationQueue = NSOperationQueue()
-        motionCalc = LowFilterMotionCalculation()
+        motionCalc = LinearMotionCalculation()
     }
 
     func startUpdateVariable() {
