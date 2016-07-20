@@ -9,11 +9,13 @@ from struct import *
 from bluetooth.ble import GATTRequester
 from bluetooth.ble import DiscoveryService
 
+current_milli_time = lambda: int(round(time.time()*1000))
 tracked_devices = []
 socket_open = False
 service = DiscoveryService()
 
 class Reader(object):
+    request_time_list = []
     def __init__(self, address):
         self.requester = GATTRequester(address, False)
         self.connect()
@@ -22,21 +24,22 @@ class Reader(object):
         t.start()
 
     def connect(self):
-        self.requester.connect(True,"random","medium",0,64)
+        self.requester.connect(True,"random","medium",0,32)
         print ("Connected")
 
     def request_uuid(self):
         self.uuid = self.requester.read_by_uuid("D6F8BDCC-3885-11E6-AC61-9E71128CAE77")[0]
         print("uuid read:", self.uuid)
-        if len(self.uuid) < 36:
+        if len(self.uuid) < 37:
             self.uuid = self.uuid + self.requester.read_by_uuid("D6F8BDCC-3885-11E6-AC61-9E71128CAE77")[0]
-        print("complet uuid:", self.uuid)   
+        print("complete uuid:", self.uuid[0:35])   
 
     def periodical_request(self):
         tracked_devices.append(threading.current_thread().getName())
         try:
             self.request_uuid()
         except RuntimeError:
+            tracked_devices.remove(threading.current_thread().getName())
             return
         count = 0
         while True:
@@ -52,7 +55,7 @@ class Reader(object):
             print("Reconnecting")
             self.requester.disconnect()
             try:
-                self.requester.connect(True,"random","medium",0,64)
+                self.requester.connect(True,"random","medium",0,32)
             except RuntimeError:
                 # End the thread bc cannot reconnect
                 if threading.current_thread().getName() in tracked_devices:
@@ -65,8 +68,12 @@ class Reader(object):
                 sys.exit()
             print("Reconnected")
         try:
+            start_time = current_milli_time()
             data = self.requester.read_by_uuid(
                 "16864516-21E0-11E6-B67B-9E71128CAE77")[0]
+            diff = current_milli_time() - start_time
+            self.request_time_list.append(int(diff))
+            print(self.request_time_list)
         except RuntimeError as e:
             print("RuntimeError", e)
             self.requester.disconnect()
@@ -112,8 +119,9 @@ def request_device_data(devices):
 
 def start_le_task():
     while True:
+        print ("le task")
         request_device_data(scan_devices())
-        time.sleep(10)
+        time.sleep(5)
 
 
 
