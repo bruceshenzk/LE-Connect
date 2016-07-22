@@ -19,7 +19,7 @@ class LinearMotionCalculation: MotionCalculation {
             let y = userAcceleration!.y
             let z = userAcceleration!.z
             
-            accelerationsOverTime[accelerationIndex] = x*x+y*y+z*z
+            accelerationsOverTime[accelerationIndex] = sqrt(x*x+y*y+z*z)
         }
         else {
             accelerationsOverTime[accelerationIndex] =

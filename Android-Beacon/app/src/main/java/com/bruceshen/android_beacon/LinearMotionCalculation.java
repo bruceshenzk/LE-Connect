@@ -14,8 +14,8 @@ public class LinearMotionCalculation implements MotionCalculation {
     @Override
     public double calcMotion(SensorEvent sensorEvent) {
         float[] values = sensorEvent.values;
-        accelerationOverTime[acceleratinIndex++] = (double) (values[0]*values[0]
-                +values[1]*values[1]+values[2]*values[2]);
+        accelerationOverTime[acceleratinIndex++] = Math.sqrt((double) (values[0]*values[0]
+                +values[1]*values[1]+values[2]*values[2]));
         return calculateAverage();
     }
 
