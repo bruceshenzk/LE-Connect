@@ -12,7 +12,7 @@ last_color = (0, 0, 0)
 next_color = (0, 0, 0)
 current_r = 0.0
 increasing_r = True
-ave_level = 5.0
+ave_level = 1.0
 shifting_stage = 0
 
 
@@ -102,7 +102,7 @@ def set_color_3(ar, ag, ab):
 
 def set_LED():
     global r, g, b
-    print(r, g, b)
+    #print(r, g, b)
     c1 = (1-r) * 100
     c2 = (1-g) * 100
     c3 = (1-b) * 100
@@ -119,4 +119,3 @@ def main():
         print("Interrupted")
         GPIO.cleanup()
     
-main()

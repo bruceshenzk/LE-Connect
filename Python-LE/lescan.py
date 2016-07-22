@@ -5,6 +5,7 @@ import time
 import signal
 import socket_connect
 import signal_handler
+import motion_manager
 from struct import *
 from bluetooth.ble import GATTRequester
 from bluetooth.ble import DiscoveryService
@@ -15,11 +16,10 @@ socket_open = False
 service = DiscoveryService()
 
 class Reader(object):
-    request_time_list = []
     def __init__(self, address):
         self.requester = GATTRequester(address, False)
         self.connect()
-        t = threading.Thread(name=address,target=self.periodical_request)
+	t = threading.Thread(name=address,target=self.periodical_request)
         t.daemon = True
         t.start()
 
@@ -47,7 +47,7 @@ class Reader(object):
             count = count + 1
             print("Count:",count)
             time.sleep(1)
-            
+    
 
 
     def request_data(self):
@@ -71,9 +71,6 @@ class Reader(object):
             start_time = current_milli_time()
             data = self.requester.read_by_uuid(
                 "16864516-21E0-11E6-B67B-9E71128CAE77")[0]
-            diff = current_milli_time() - start_time
-            self.request_time_list.append(int(diff))
-            print(self.request_time_list)
         except RuntimeError as e:
             print("RuntimeError", e)
             self.requester.disconnect()
@@ -83,6 +80,7 @@ class Reader(object):
             print ("Device name:",self.uuid,"Device motion:", d) 
             if socket_open:
                 socket_connect.sendMotionAndUUID(d,self.uuid)
+            motion_manager.process_data(self.uuid[0:35], self.uuid[36],d)
         except AttributeError:
             print ("Device name: " + data)
 
@@ -118,6 +116,7 @@ def request_device_data(devices):
 
 
 def start_le_task():
+    motion_manager.startLED()
     while True:
         print ("le task")
         request_device_data(scan_devices())
