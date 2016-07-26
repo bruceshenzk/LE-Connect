@@ -15,20 +15,18 @@ increasing_r = True
 ave_level = 1.0
 shifting_stage = 0
 
-
 def setup():
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(LED1, GPIO.OUT)
-        GPIO.setup(LED2, GPIO.OUT)
-        GPIO.setup(LED3, GPIO.OUT)
-        global pwm1, pwm2, pwm3
-        pwm1 = GPIO.PWM(LED1, 1000)
-        pwm2 = GPIO.PWM(LED2, 1000)
-        pwm3 = GPIO.PWM(LED3, 1000)
-        pwm1.start(100)
-        pwm2.start(100)
-        pwm3.start(100)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(LED1, GPIO.OUT)
+    GPIO.setup(LED2, GPIO.OUT)
+    GPIO.setup(LED3, GPIO.OUT)
+    global pwm1, pwm2, pwm3
+    pwm1 = GPIO.PWM(LED1, 1000)
+    pwm2 = GPIO.PWM(LED2, 1000)
+    pwm3 = GPIO.PWM(LED3, 1000)
+    pwm1.start(100)
+    pwm2.start(100)
+    pwm3.start(100)
 
 def calculate_color():
     return (abs(math.cos(current_r/10*math.pi*(3+ave_level)/8)),
@@ -115,7 +113,8 @@ def main():
     try:
         setup()
         start()
-    except KeyboardInterrupt:
-        print("Interrupted")
+        
+    except SystemExit:
+        print "SystemExit"
+    finally:
         GPIO.cleanup()
-    

@@ -56,6 +56,4 @@ def calc_average():
 
 def update_average():
     color_alg1.ave_level = average
-
-    
     
