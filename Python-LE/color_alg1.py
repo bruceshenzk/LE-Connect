@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import math
 import time
+from multiprocessing import Value
 
 LED1 = 18
 LED2 = 23
@@ -12,8 +13,16 @@ last_color = (0, 0, 0)
 next_color = (0, 0, 0)
 current_r = 0.0
 increasing_r = True
-ave_level = 1.0
+ave_level = Value('d',1.0)
 shifting_stage = 0
+
+def update_ave_level(level):
+    #global ave_level
+    #print "update value"
+    ave_level.value = level.value
+    #print ave_level, level
+    #ave_level = level
+    
 
 def setup():
     GPIO.setmode(GPIO.BCM)
@@ -29,9 +38,9 @@ def setup():
     pwm3.start(100)
 
 def calculate_color():
-    return (abs(math.cos(current_r/10*math.pi*(3+ave_level)/8)),
-            abs(math.sin(current_r/10*math.pi*(3+ave_level)/8)),
-            abs(math.sin(ave_level/10*math.pi*(3+current_r)/8)))
+    return (abs(math.cos(current_r/10*math.pi*(3+ave_level.value)/8)),
+            abs(math.sin(current_r/10*math.pi*(3+ave_level.value)/8)),
+            abs(math.sin(ave_level.value/10*math.pi*(3+current_r)/8)))
 def start():
     global last_color, next_color
     color = calculate_color()

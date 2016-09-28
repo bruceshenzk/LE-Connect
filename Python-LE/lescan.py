@@ -120,7 +120,7 @@ def start_le_task():
     while True:
         print ("le task")
         request_device_data(scan_devices())
-        time.sleep(5)
+        time.sleep(15)
 
 
 

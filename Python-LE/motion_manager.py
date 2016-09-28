@@ -1,6 +1,6 @@
 from __future__ import division
 import color_alg1
-from multiprocessing import Process
+from multiprocessing import Process,Value
 import time
 
 current_milli_time = lambda: int(round(time.time()*1000))
@@ -39,6 +39,7 @@ def process_data(uuid, m, d):
 def calc_average():
     s = 0
     c = 0
+    global average
     print "Motion", motion
     print "Values",motion.values()
     for k in motion.keys():
@@ -53,7 +54,8 @@ def calc_average():
     else:
         average = 1
     print "Average:", average
+    
 
 def update_average():
-    color_alg1.ave_level = average
+    color_alg1.update_ave_level(Value('d',average))
     
